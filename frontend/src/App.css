@@ -1,0 +1,319 @@
+@font-face {
+  font-family: 'Circular';
+  src: url('\fonts\CircularSpotifyText-Medium.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Circular';
+  src: url('\fonts\CircularSpotifyText-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+:root {
+  --spotify-black: #121212;
+  --spotify-dark-gray: #181818;
+  --spotify-gray: #282828;
+  --spotify-light-gray: #b3b3b3;
+  --spotify-green: #1DB954;
+  --spotify-green-inactive: #197b3b;
+  --spotify-white: #FFFFFF;
+  --spotify-hover-gray: #333333;
+}
+
+body, html{
+  font-family: 'Circular', sans-serif;
+  font-weight: 400;
+  color: var(--spotify-white);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: var(--spotify-black);
+}
+
+
+.full-screen {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--spotify-black);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6) 0%, var(--spotify-black) 100%);
+}
+/* --------------------------------------- Navbar styling --------------------------------------- */
+
+.navbar {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 16px 0;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.navbar-brand .brand-link {
+  color: var(--spotify-white);
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-item {
+  color: var(--spotify-light-gray);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: color 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.nav-item:hover {
+  color: var(--spotify-white);
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--spotify-white);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+/* Container styles */
+.container {
+  padding-top: 80px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.display-4 {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  margin-bottom: 40px;
+}
+
+/* ------------------------------------- Input form styling --------------------------------------*/
+textarea.form-control {
+  background-color: var(--spotify-gray);
+  border: none;
+  color: var(--spotify-white);
+  border-radius: 4px;
+  padding: 12px;
+  min-height: 120px;
+  box-shadow: none;
+  /* resize: vertical; */
+  
+}
+
+textarea.form-control:focus {
+  background-color: var(--spotify-hover-gray);
+  box-shadow: none;
+  outline: 2px solid var(--spotify-green);
+  color: var(--spotify-white);
+}
+
+textarea.form-control::placeholder {
+  color: var(--spotify-light-gray);
+  opacity: 0.7;
+}
+
+/* --------------------------------------- Button styling --------------------------------------- */
+.btn-spotify {
+  background-color: var(--spotify-green);
+  color: var(--spotify-black);
+  font-family: 'Circular', sans-serif;
+  font-weight: 700;
+  border-radius: 500px;
+  padding: 12px 32px;
+  font-size: 0.9rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-spotify:hover {
+  background-color: #1ed760;
+  transform: scale(1.08);
+}
+
+.btn-spotify:active {
+  transform: scale(0.95);
+}
+
+.btn-spotify:disabled {
+  background-color: var(--spotify-green-inactive);
+  color: rgb(170, 170, 170);
+}
+
+/* --------------------------------- Mood and Playlist Display ---------------------------------- */
+
+.mood-display, .playlist-display {
+  background-color: var(--spotify-dark-gray);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 20px 0;
+  transition: transform 0.3s ease;
+}
+
+.mood-display:hover, .playlist-display:hover {
+  transform: translateY(-5px);
+}
+
+.mood-emoji {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.mood-text {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--spotify-green);
+}
+
+/* Playlist iframe */
+.playlist-embed {
+  border-radius: 12px;
+  border: none;
+  width: 100%;
+  height: 380px;
+  background-color: var(--spotify-gray);
+}
+
+/* --------------------------------------- Saved Playlists -------------------------------------- */
+
+.saved-playlists-section {
+  margin-top: 40px;
+  padding: 24px;
+  background-color: var(--spotify-dark-gray);
+  border-radius: 8px;
+}
+
+.saved-playlists-header {
+  font-size: 1.5rem;
+  color: var(--spotify-white);
+  border-bottom: 1px solid var(--spotify-gray);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.playlist-item {
+  background-color: var(--spotify-gray);
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.playlist-item:hover {
+  background-color: var(--spotify-hover-gray);
+}
+
+.playlist-mood {
+  font-weight: 700;
+  color: var(--spotify-green);
+}
+
+.playlist-link {
+  color: var(--spotify-light-gray);
+  text-decoration: none;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.playlist-link:hover {
+  color: var(--spotify-white);
+  font-size:medium;
+}
+
+.playlist-timestamp {
+  margin-left: auto;
+  margin-right: 350px;
+  font-size: 0.8rem;
+  color: var(--spotify-light-gray);
+}
+/* ------------------------------------- Responsive styles -------------------------------------- */
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--spotify-black);
+    flex-direction: column;
+    padding: 16px;
+    width: 100%;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-item {
+    padding: 12px 0;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .display-4 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 0 16px;
+  }
+  
+  .btn-spotify {
+    padding: 10px 20px;
+    font-size: 0.8rem;
+  }
+}

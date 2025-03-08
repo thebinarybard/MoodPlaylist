@@ -6,6 +6,9 @@ import LibraryPage from "./pages/LibraryPage";
 const App: React.FC = () => {
   return (
     <div className="full-screen">
+      <head>
+        <title>My Song Finder</title>
+      </head>
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />

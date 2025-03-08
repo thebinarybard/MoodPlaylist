@@ -12,8 +12,8 @@ MoodPlaylist is a web application that analyzes your mood based on text input an
 
 ## Demo
 
-https://mood-sync-sigma.vercel.app
-
+[https://mood-sync-sigma.vercel.app
+](https://moodplaylist.vercel.app)
 ## Prerequisites
 
 Before running the project, ensure you have the following installed:

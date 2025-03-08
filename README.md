@@ -12,7 +12,7 @@ MoodPlaylist is a web application that analyzes your mood based on text input an
 
 ## Demo
 
-*(Add a link to a live demo if available, e.g., hosted on Netlify/Heroku, or include a GIF/screenshot of the app in action.)*
+https://mood-sync-sigma.vercel.app
 
 ## Prerequisites
 

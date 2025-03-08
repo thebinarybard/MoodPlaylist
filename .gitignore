@@ -27,7 +27,7 @@ pip-selfcheck.json
 playlists.db
 
 # Environment variables (sensitive data like Spotify API credentials)
-.env
+backend/api/.env
 .env.bak  # Backup files for .env
 *.env  # Any other .env files (e.g., .env.local, .env.dev)
 

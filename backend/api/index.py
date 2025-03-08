@@ -7,18 +7,18 @@ import sqlite3
 from dotenv import load_dotenv
 import os
 
-load_dotenv("/.env")
+load_dotenv(".env")
 
-client_id = os.getenv("SPOTIFY_CLIENT_ID")
-client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
+client_iD = os.getenv("SPOTIFY_CLIENT_ID")
+client_Secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
 app = Flask(__name__)
 CORS(app)
 
 # Spotify credentials
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
-    client_id=client_id,
-    client_secret=client_secret
+    client_id=client_iD,
+    client_secret=client_Secret
 ))
 
 mood_playlists = {

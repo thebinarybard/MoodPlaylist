@@ -7,38 +7,45 @@ import sqlite3
 from dotenv import load_dotenv
 import os
 
+# Load environment variables
 load_dotenv(".env")
 
-client_iD = os.getenv("SPOTIFY_CLIENT_ID")
-client_Secret = os.getenv("SPOTIFY_CLIENT_SECRET")
+client_id = os.getenv("SPOTIPY_CLIENT_ID")
+client_secret = os.getenv("SPOTIPY_CLIENT_SECRET")
 
 app = Flask(__name__)
 CORS(app)
 
-# Spotify credentials
+# Initialize Spotify client
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
-    client_id=client_iD,
-    client_secret=client_Secret
+    client_id=client_id,
+    client_secret=client_secret
 ))
 
+# Improved mood to playlist mapping with better descriptions
 mood_playlists = {
-    "happy": "happy songs",
-    "sad": "sad songs",
-    "neutral": "chill vibes",
-    "angry": "hard rock",
-    "stressed": "lofi beats",
-    "calm": "acoustic covers"
+    "happy": "upbeat positive music",
+    "sad": "melancholic emotional songs",
+    "neutral": "chill relaxing vibes",
+    "angry": "intense hard rock",
+    "stressed": "calming lofi beats",
+    "calm": "peaceful acoustic covers"
 }
 
 @app.route('/analyze', methods=['POST'])
 def analyze_mood():
     data = request.get_json()
     text = data.get('text', '')
+    
     if not text:
         return jsonify({"error": "No text provided"}), 400
+    
+    # Analyze text sentiment
     blob = TextBlob(text)
     polarity = blob.sentiment.polarity
     subjectivity = blob.sentiment.subjectivity
+    
+    # More nuanced mood classification
     if polarity > 0.5:
         mood = "happy"
     elif polarity > 0.1 and subjectivity > 0.5:
@@ -51,20 +58,40 @@ def analyze_mood():
         mood = "stressed"
     else:
         mood = "neutral"
-    return jsonify({"mood": mood})
+    
+    return jsonify({
+        "mood": mood,
+        "analysis": {
+            "polarity": polarity,
+            "subjectivity": subjectivity
+        }
+    })
 
 @app.route('/playlist', methods=['POST'])
 def get_playlist():
     data = request.get_json()
     mood = data.get('mood')
+    
     if not mood:
         return jsonify({"error": "No mood provided"}), 400
-    genre = mood_playlists.get(mood, "pop")  # Use mood-specific genre
+    
+    # Get appropriate genre for the mood
+    genre = mood_playlists.get(mood, "pop")
     query = f"{mood} {genre}"
+    
     try:
         results = sp.search(q=query, type='playlist', limit=1)
+        if not results['playlists']['items']:
+            return jsonify({"error": "No playlists found"}), 404
+            
         playlist = results['playlists']['items'][0]['external_urls']['spotify']
-        return jsonify({"playlist_url": playlist})
+        playlist_name = results['playlists']['items'][0]['name']
+        
+        return jsonify({
+            "playlist_url": playlist,
+            "playlist_name": playlist_name,
+            "mood": mood
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -73,15 +100,21 @@ def save_playlist():
     data = request.get_json()
     mood = data.get('mood')
     url = data.get('playlist_url')
+    name = data.get('playlist_name', 'Unnamed Playlist')
+    
     if not mood or not url:
         return jsonify({"error": "Mood and URL required"}), 400
+    
     try:
         conn = sqlite3.connect('playlists.db')
         c = conn.cursor()
-        c.execute('INSERT INTO playlists (mood, url, timestamp) VALUES (?, ?, datetime("now"))', (mood, url))
+        c.execute(
+            'INSERT INTO playlists (mood, url, name, timestamp) VALUES (?, ?, ?, datetime("now"))', 
+            (mood, url, name)
+        )
         conn.commit()
         conn.close()
-        return jsonify({"status": "saved"})
+        return jsonify({"status": "saved", "mood": mood})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -89,10 +122,13 @@ def save_playlist():
 def get_saved_playlists():
     try:
         conn = sqlite3.connect('playlists.db')
+        conn.row_factory = sqlite3.Row  # This enables column access by name
         c = conn.cursor()
-        c.execute('SELECT mood, url, timestamp FROM playlists ORDER BY timestamp DESC')
-        playlists = [{"mood": row[0], "url": row[1], "timestamp": row[2]} for row in c.fetchall()]
+        c.execute('SELECT mood, url, name, timestamp FROM playlists ORDER BY timestamp DESC')
+        
+        playlists = [dict(row) for row in c.fetchall()]
         conn.close()
+        
         return jsonify({"playlists": playlists})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -100,12 +136,20 @@ def get_saved_playlists():
 def init_db():
     conn = sqlite3.connect('playlists.db')
     c = conn.cursor()
-    c.execute('CREATE TABLE IF NOT EXISTS playlists (id INTEGER PRIMARY KEY, mood TEXT, url TEXT, timestamp TEXT)')
-    #clear saved playlists
-    #c.execute("DELETE FROM playlists;")
+    # Create table with name column added
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS playlists (
+            id INTEGER PRIMARY KEY, 
+            mood TEXT, 
+            url TEXT, 
+            name TEXT,
+            timestamp TEXT
+        )
+    ''')
     conn.commit()
     conn.close()
 
+# Initialize database on startup
 init_db()
 
 if __name__ == "__main__":

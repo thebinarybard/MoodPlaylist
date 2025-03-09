@@ -33,6 +33,16 @@ body, html{
   background-color: var(--spotify-black);
 }
 
+.title{
+  font-weight: 600;
+}
+
+h1, h2, h3, h4{
+  text-transform: uppercase;
+  font-family: 'Circular', sans-serif;
+  font-weight: 700;
+}
+
 
 .full-screen {
   width: 100%;
@@ -171,8 +181,18 @@ textarea.form-control::placeholder {
 }
 
 .btn-spotify:disabled {
-  background-color: var(--spotify-green-inactive);
-  color: rgb(170, 170, 170);
+  background-color: var(--spotify-green);
+  color: var(--spotify-white);
+  font-family: 'Circular', sans-serif;
+  font-weight: 700;
+  border-radius: 500px;
+  padding: 12px 32px;
+  font-size: 0.9rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 /* --------------------------------- Mood and Playlist Display ---------------------------------- */

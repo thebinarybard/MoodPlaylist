@@ -1,4 +1,7 @@
+// components/TextInput.tsx
 import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 interface TextInputProps {
   onAnalyze: (text: string) => void;
@@ -10,21 +13,21 @@ const TextInput: React.FC<TextInputProps> = ({ onAnalyze, isLoading }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (text.trim()) {
-      onAnalyze(text);
-    }
+    onAnalyze(text);
   };
 
   return (
-    <div className="mood-entry-container">
+    <div className="text-input-container">
       <form onSubmit={handleSubmit}>
-        <div className="form-group mb-3">
+        <div className="mb-3">
           <textarea
-            className="form-control"
-            rows={4}
-            placeholder="How are you feeling today? Tell us about your mood..."
+            className="form-control shadow-sm"
+            placeholder="How are you feeling today? Describe your mood, thoughts, or share what's on your mind..."
+            rows={5}
             value={text}
             onChange={(e) => setText(e.target.value)}
+            disabled={isLoading}
+            required
           ></textarea>
         </div>
         <button
@@ -32,7 +35,17 @@ const TextInput: React.FC<TextInputProps> = ({ onAnalyze, isLoading }) => {
           className="btn btn-spotify"
           disabled={isLoading || !text.trim()}
         >
-          {isLoading ? "Finding your playlist..." : "Get My Playlist"}
+          {isLoading ? (
+            <>
+              <FontAwesomeIcon icon={faSpinner} spin className="me-2" />
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faSearch} className="me-2" />
+              Analyze My Mood
+            </>
+          )}
         </button>
       </form>
     </div>

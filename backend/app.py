@@ -72,28 +72,59 @@ def get_playlist():
     data = request.get_json()
     mood = data.get('mood')
     
+    print(f"Received request for mood: {mood}")  # Debug logging
+    
     if not mood:
         return jsonify({"error": "No mood provided"}), 400
+    
+    # Check if Spotify credentials are set
+    if not client_id or not client_secret:
+        print("ERROR: Spotify API credentials are missing")
+        return jsonify({"error": "Spotify API credentials not configured"}), 500
     
     # Get appropriate genre for the mood
     genre = mood_playlists.get(mood, "pop")
     query = f"{mood} {genre}"
+    print(f"Searching Spotify with query: '{query}'")  # Debug logging
     
     try:
         results = sp.search(q=query, type='playlist', limit=1)
-        if not results['playlists']['items']:
-            return jsonify({"error": "No playlists found"}), 404
+        
+        # Debug: Print the raw results
+        print(f"Search results: {results}")
+        
+        # Check if there are valid items in the results
+        if not results['playlists']['items'] or results['playlists']['items'][0] is None:
+            print(f"No valid playlists found for query: '{query}'")
             
+            # Fallback to a more generic search
+            fallback_query = genre
+            print(f"Trying fallback query: '{fallback_query}'")
+            results = sp.search(q=fallback_query, type='playlist', limit=1)
+            
+            # Check again after fallback
+            if not results['playlists']['items'] or results['playlists']['items'][0] is None:
+                return jsonify({"error": f"No playlists found for {mood}"}), 404
+        
+        # Access playlist details
         playlist = results['playlists']['items'][0]['external_urls']['spotify']
         playlist_name = results['playlists']['items'][0]['name']
         
-        return jsonify({
+        response_data = {
             "playlist_url": playlist,
             "playlist_name": playlist_name,
             "mood": mood
-        })
+        }
+        print(f"Returning playlist: {response_data}")  # Debug logging
+        
+        return jsonify(response_data)
+    except spotipy.SpotifyException as e:
+        print(f"Spotify API error: {str(e)}")
+        return jsonify({"error": f"Spotify API error: {str(e)}"}), 500
     except Exception as e:
+        print(f"Unexpected error: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/save_playlist', methods=['POST'])
 def save_playlist():
@@ -117,6 +148,7 @@ def save_playlist():
         return jsonify({"status": "saved", "mood": mood})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
 @app.route('/saved_playlists', methods=['GET'])
 def get_saved_playlists():
@@ -146,6 +178,7 @@ def init_db():
             timestamp TEXT
         )
     ''')
+
     conn.commit()
     conn.close()
 
